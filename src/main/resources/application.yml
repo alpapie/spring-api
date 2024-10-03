@@ -1,0 +1,5 @@
+spring:
+    data:
+        mongodb:
+            uri: mongodb+srv://alpapie0908:9nonW1QpXHncABM7@cluster0.yuzob.mongodb.net/?retryWrites=true&w=majority
+            database: letsPlay
