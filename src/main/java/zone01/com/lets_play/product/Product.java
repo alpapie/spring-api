@@ -2,6 +2,8 @@ package zone01.com.lets_play.product;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import jakarta.validation.constraints.*;
 
 @Document(collection = "products")
@@ -21,6 +23,7 @@ public record Product(
     @Positive(message = "The price must be a positive number")
     Double price,
 
+    @Field
     String userId
 ) {
 

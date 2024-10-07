@@ -1,6 +1,5 @@
 package zone01.com.lets_play.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,11 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -48,7 +47,9 @@ public class UserController {
 
     @GetMapping("/api/admin/users")
     public List<User> getAllUsers(){
-        return userService.getAllUsers();
+        return userService.getAllUsers().stream()
+                .map(User::fromUser)
+                .collect(Collectors.toList());
     }
 
     @DeleteMapping("/api/admin/user/{id}")
@@ -62,17 +63,16 @@ public class UserController {
     }
 
     @PutMapping("/api/user/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<String>  update( @Valid @RequestBody User user,@PathVariable String id){
         try {
             if (userService.getUserById(id).isEmpty()) {
-                return new ResponseEntity<>("No user with this id",HttpStatus.NOT_FOUND);
+                return ResponseEntity.status(404).body("No user fund");
             }
     
             String encodedPassword = passwordEncoder.encode(user.password());
             User newUser = new User(null, user.name(), user.email(), encodedPassword, user.role());
             userService.updateUser(id, newUser);    
-           return  new ResponseEntity<>(String.format("user with id %s is successfully delete", id),HttpStatus.OK);
+           return  new ResponseEntity<>(String.format("user with id %s is successfully update", id),HttpStatus.OK);
 
         } catch (Exception e) {
             System.out.println(e);

@@ -37,9 +37,10 @@ public class UserService implements UserServiceInterface {
             Collection<? extends GrantedAuthority> roles = authentication.getAuthorities();
             boolean isAdmin = roles.stream()
                     .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
-        System.out.println(user.role());
+        System.out.println(currentUserEmail);
         if (user.email().equals(currentUserEmail) || isAdmin) {
-
+            
+            System.out.println(user.id());
             user = new User(user.id(), updatedUser.name(), user.email(), updatedUser.password(), updatedUser.role());
             return userRepository.save(user);
         }

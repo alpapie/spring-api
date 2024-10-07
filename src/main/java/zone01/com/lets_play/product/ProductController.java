@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import zone01.com.lets_play.user.User;
-import zone01.com.lets_play.user.UserRepository;
 import zone01.com.lets_play.user.UserService;
 
 import java.util.List;
@@ -62,7 +61,7 @@ public class ProductController {
         try {
             Optional<User> user = userService.getAuth();
             if (user.isEmpty() ) {
-                ResponseEntity.badRequest().build();
+                ResponseEntity.badRequest().body("no content");
             }
             Optional<Product> productrr= productService.getProductById(id);
             if (productrr.isEmpty() || !productrr.get().userId().equals(user.get().id())) {
@@ -70,6 +69,7 @@ public class ProductController {
             }
             return ResponseEntity.ok(productService.updateProduct(id, product));
         } catch (Exception e) {
+            System.out.println(e);
            return ResponseEntity.badRequest().build();
         }
     }
@@ -87,8 +87,8 @@ public class ProductController {
     @GetMapping("/api/user/product/{userId}")
     public ResponseEntity<List<Product>> getProductsByUserId(@PathVariable String userId) {
         Optional<User> user = userService.getAuth();
-        System.out.println(user.get().id()==userId);
-        if (user.get().id().equals(userId) || user.get().role()=="ADMIN") {
+        System.out.println(user.get().role());
+        if (user.get().id().equals(userId) || user.get().role().equals("ADMIN")) {
             return ResponseEntity.ok(productService.getProductsByUserId(userId));
         }
         return ResponseEntity.status(401).build();
