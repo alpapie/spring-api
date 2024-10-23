@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,7 +27,6 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
     
-    @PermitAll
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
@@ -49,7 +45,6 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/api/admin/users")
     public List<User> getAllUsers(){
         return userService.getAllUsers().stream()
@@ -67,7 +62,6 @@ public class UserController {
         }
     }
 
-    @PostAuthorize("1==1")
     @PutMapping("/api/user/{id}")
     public ResponseEntity<String>  update( @Valid @RequestBody User user,@PathVariable String id){
         try {
